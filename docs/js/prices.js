@@ -247,7 +247,7 @@ export const PRODUCTS = {
           { id: 'four', label: '四つ折り (基本料に +¥10,000)' }
         ]
       },
-      { id: 'quantity', label: '枚数', type: 'number', min: 1, default: 50 }
+      { id: 'quantity', label: '枚数', type: 'number', min: 1, default: 1 }
     ],
     baseFees: { standard: 23000, gloss: 33000, matte: 38000, emboss: 30000 },
     // 確認済み単価: A3片面 標準267円・マット317円、A3両面 標準322円・マット372円
@@ -338,7 +338,7 @@ export const PRODUCTS = {
         ]
       },
       { id: 'finish', label: '加工', type: 'finish' },
-      { id: 'quantity', label: '個数', type: 'number', min: 1, default: 30 }
+      { id: 'quantity', label: '個数', type: 'number', min: 1, default: 1 }
     ],
     // 基本料: 標準/光沢PP/エンボス ¥23,000、マットPP ¥38,000
     // 単価: 標準=光沢PP=エンボス（同額）、マットPPのみ割高
@@ -423,7 +423,7 @@ export const PRODUCTS = {
       },
       { id: 'finish', label: '加工', type: 'finish' },
       {
-        id: 'quantity', label: '個数', type: 'number', min: 1, default: 30,
+        id: 'quantity', label: '個数', type: 'number', min: 1, default: 1,
         description: 'PP/エンボス加工の箱のみシュリンク包装が可能です'
       }
     ],
@@ -470,7 +470,7 @@ export const PRODUCTS = {
         id: 'sample', label: '事前サンプルあり', type: 'checkbox',
         description: '発注前に確認サンプルを取得します (+¥15,000)'
       },
-      { id: 'quantity', label: '枚数', type: 'number', min: 1, default: 10 }
+      { id: 'quantity', label: '枚数', type: 'number', min: 1, default: 1 }
     ],
     // 基本料: サンプルなし¥18,000 / サンプルあり¥33,000
     // 確認済み単価: A4=¥280 / A3=¥380
@@ -520,7 +520,7 @@ export const PRODUCTS = {
           { id: 'fold16',  label: '十六折り B4変形/A3のみ (+¥50/枚)' },
         ]
       },
-      { id: 'quantity', label: '枚数', type: 'number', min: 1, default: 50 }
+      { id: 'quantity', label: '枚数', type: 'number', min: 1, default: 1 }
     ],
     baseFee:      10000,
     // 確認済み単価: A4 片面10円/両面30円、B4変形A/A3 片面20円/両面50円
@@ -572,7 +572,7 @@ export const PRODUCTS = {
         description: '8〜48ページ、4の倍数で指定',
         dependsOn: { field: 'bindType', value: 'saddle' }
       },
-      { id: 'quantity', label: '部数', type: 'number', min: 1, default: 50 }
+      { id: 'quantity', label: '部数', type: 'number', min: 1, default: 1 }
     ],
     flatUnitPrices:  { b5: 60, a4: 70, b4: 80, a3: 100 },
     saddleBaseFees:  { b5: 10000, a4: 10000, b4: 12000, a3: 15000 },
@@ -628,7 +628,7 @@ export const PRODUCTS = {
     unit: '個',
     fields: [
       {
-        id: 'quantity', label: '個数', type: 'number', min: 1, default: 10,
+        id: 'quantity', label: '個数', type: 'number', min: 1, default: 1,
         description: '台紙サイズ A6。留め具一式が付属します。'
       },
       {
