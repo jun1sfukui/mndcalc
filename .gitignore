@@ -1,0 +1,21 @@
+# Node.js（テスト実行時に一時生成）
+node_modules/
+package.json
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code ローカル設定（個人設定・権限情報を含む）
+.claude/settings.local.json
+
+# エディタ
+.vscode/
+.idea/
+*.suo
+*.user
+
+# 環境変数
+.env
+.env.*

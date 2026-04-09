@@ -1,0 +1,388 @@
+/* ─────────────────────────────────────────
+   萬印堂 印刷見積もりツール スタイルシート
+   ─────────────────────────────────────────
+   設計方針:
+   - モバイルファースト。720px以上で2カラムレイアウト
+   - CSS カスタムプロパティでテーマ管理
+   - 最小限の装飾、可読性・操作性を優先
+   ───────────────────────────────────────── */
+
+:root {
+  --c-primary:       #2563eb;
+  --c-primary-dark:  #1d4ed8;
+  --c-bg:            #f1f5f9;
+  --c-surface:       #ffffff;
+  --c-border:        #e2e8f0;
+  --c-text:          #1e293b;
+  --c-muted:         #64748b;
+  --c-info-bg:       #eff6ff;
+  --c-info-border:   #bfdbfe;
+  --c-danger:        #dc2626;
+  --c-danger-bg:     #fee2e2;
+  --c-danger-border: #fecaca;
+  --radius:          8px;
+  --shadow:          0 1px 3px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Yu Gothic UI", "Hiragino Kaku Gothic ProN",
+               "Noto Sans JP", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--c-text);
+  background: var(--c-bg);
+}
+
+[v-cloak] { display: none; }
+
+a { color: var(--c-primary); }
+
+/* ─── ヘッダー ─── */
+.site-header {
+  background: var(--c-primary);
+  color: white;
+  padding: 12px 20px;
+}
+.site-header h1 { font-size: 17px; font-weight: 700; }
+.site-header p  { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+.site-header a { color: rgba(255,255,255,0.85); text-decoration: underline; }
+
+/* ─── メインレイアウト ─── */
+.app-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 720px) {
+  .app-main { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+
+/* ─── カード ─── */
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 2px solid var(--c-primary);
+}
+
+/* ─── 商品選択チップ ─── */
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.product-chip {
+  padding: 5px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  background: white;
+  color: var(--c-text);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.product-chip.active {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: white;
+  font-weight: 500;
+}
+.product-chip:hover:not(.active) {
+  border-color: var(--c-primary);
+  color: var(--c-primary);
+}
+
+/* ─── フォーム ─── */
+.form-group { margin-bottom: 12px; }
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c-muted);
+  margin-bottom: 4px;
+}
+
+.form-select,
+.form-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--c-text);
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-select:focus,
+.form-input:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+.field-note {
+  font-size: 11px;
+  color: var(--c-muted);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* ─── 加工ボタン（ラジオ風） ─── */
+.finish-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.finish-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  background: white;
+  color: var(--c-text);
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.finish-btn.is-active {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: white;
+  font-weight: 500;
+}
+.finish-btn:hover:not(.is-active) {
+  border-color: var(--c-primary);
+  color: var(--c-primary);
+}
+
+/* ─── チェックボックス ─── */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.check-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--c-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.check-row label {
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+/* ─── 価格プレビュー ─── */
+.price-preview {
+  border: 1px solid var(--c-info-border);
+  background: var(--c-info-bg);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin: 14px 0;
+}
+.price-preview-formula {
+  font-size: 12px;
+  color: var(--c-muted);
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+.price-preview-total {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--c-primary);
+}
+.price-preview-total small {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--c-muted);
+  margin-left: 4px;
+}
+
+/* ─── ボタン ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-block    { width: 100%; }
+
+.btn-primary {
+  background: var(--c-primary);
+  color: white;
+}
+.btn-primary:hover:not(:disabled) { background: var(--c-primary-dark); }
+
+.btn-secondary {
+  background: white;
+  color: var(--c-text);
+  border-color: var(--c-border);
+}
+.btn-secondary:hover { border-color: var(--c-primary); color: var(--c-primary); }
+
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+
+.btn-danger {
+  color: var(--c-danger);
+  border-color: var(--c-danger-border);
+  background: white;
+}
+.btn-danger:hover { background: var(--c-danger-bg); }
+
+/* ─── 見積もりリスト ─── */
+.estimate-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--c-muted);
+  font-size: 13px;
+}
+
+.estimate-list { list-style: none; }
+
+.estimate-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--c-border);
+  align-items: start;
+}
+.estimate-item:last-child { border-bottom: none; }
+
+.item-name    { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
+.item-specs   { font-size: 11px; color: var(--c-muted); line-height: 1.7; }
+.item-formula { font-size: 11px; color: var(--c-muted); margin-top: 4px; word-break: break-all; }
+
+.item-price-wrap { text-align: right; }
+.item-price      { font-weight: 600; font-size: 15px; white-space: nowrap; }
+
+/* ─── 合計・フッター ─── */
+.estimate-footer {
+  margin-top: 14px;
+  padding: 14px;
+  background: var(--c-info-bg);
+  border-radius: var(--radius);
+}
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.total-label  { font-weight: 500; }
+.total-amount { font-size: 24px; font-weight: 700; color: var(--c-primary); }
+.total-tax         { font-size: 12px; color: var(--c-muted); margin-top: 4px; text-align: right; }
+.total-per-game    { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--c-border); }
+.total-per-game-amount { font-size: 18px; font-weight: 600; color: var(--c-text); }
+
+/* ─── 共有 ─── */
+.share-row {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ─── ゲームセット数バー（全幅） ─── */
+.game-count-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.game-count-label {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.game-count-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.game-count-input {
+  width: 90px;
+}
+.game-count-unit {
+  font-size: 14px;
+  white-space: nowrap;
+}
+.game-count-bar .field-note {
+  width: 100%;
+  margin-top: 0;
+}
+
+/* ─── 個数モード切替 ─── */
+.qty-mode-row {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 6px;
+  background: #dde3ec;
+  border-radius: 8px;
+  padding: 3px;
+}
+.qty-mode-btn {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: var(--c-muted);
+  border: none;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+.qty-mode-btn.is-active {
+  background: white;
+  color: var(--c-primary);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.qty-mode-btn:hover:not(.is-active) {
+  color: var(--c-text);
+}
+.qty-calc-note {
+  margin-top: 5px;
+}
+.qty-calc-note strong {
+  color: var(--c-primary);
+}
+
+/* ─── 注記 ─── */
+.notice {
+  font-size: 11px;
+  color: var(--c-muted);
+  margin-top: 10px;
+  line-height: 1.6;
+}

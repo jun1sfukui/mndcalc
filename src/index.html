@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="萬印堂のボードゲーム印刷費用を手軽に見積もれるツール。URLで見積もりを共有できます。">
+  <title>ボードゲーム印刷 見積もりツール | 萬印堂</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <header class="site-header">
+    <h1>ボードゲーム印刷 見積もりツール</h1>
+    <p>萬印堂（mnd.co.jp）の<a href="https://www.mnd.co.jp/pricelists/">価格表</a>に基づく参考見積もり</p>
+    <p>※値は古い可能性があります。また、間違いや過不足を含みます。この内容を信じず、必ず公式の価格表をご確認ください。</p>
+  </header>
+
+  <main class="app-main">
+
+    <!-- ===== ゲームセット数（全幅） ===== -->
+    <div class="card game-count-bar">
+      <label class="game-count-label" for="gameCount">製造するゲームの個数</label>
+      <div class="game-count-input-row">
+        <input
+          id="gameCount"
+          type="number"
+          class="form-input game-count-input"
+          v-model.number="gameCount"
+          min="1"
+        >
+        <span class="game-count-unit">セット</span>
+      </div>
+      <p class="field-note">商品の個数を「1ゲームあたり」で入力すると、この値を掛けて合計を算出します。</p>
+    </div>
+
+    <!-- ===== 左カラム: 商品追加フォーム ===== -->
+    <section class="card">
+      <h2 class="card-title">商品を追加</h2>
+
+      <!-- 商品種別選択 -->
+      <div class="product-grid">
+        <button
+          v-for="(product, key) in products"
+          :key="key"
+          type="button"
+          class="product-chip"
+          :class="{ active: form.product === key }"
+          @click="selectProduct(key)"
+        >{{ product.name }}</button>
+      </div>
+
+      <!-- 動的フォームフィールド -->
+      <template v-for="field in currentFields" :key="field.id">
+        <div v-if="isFieldVisible(field)" class="form-group">
+
+          <!-- セレクトボックス -->
+          <template v-if="field.type === 'select'">
+            <label class="form-label">{{ field.label }}</label>
+            <select class="form-select" v-model="form.specs[field.id]">
+              <option v-for="opt in field.options" :key="opt.id" :value="opt.id">
+                {{ opt.label }}
+              </option>
+            </select>
+          </template>
+
+          <!-- 個数入力（モード切り替えあり） -->
+          <template v-else-if="field.type === 'number' && field.id === 'quantity'">
+            <label class="form-label">{{ field.label }}</label>
+            <div class="qty-mode-row">
+              <button
+                type="button"
+                class="qty-mode-btn"
+                :class="{ 'is-active': form.specs.quantityMode === 'per_game' }"
+                @click="form.specs.quantityMode = 'per_game'"
+              >{{ form.specs.quantityMode === 'per_game' ? '● ' : '' }}1ゲームあたり</button>
+              <button
+                type="button"
+                class="qty-mode-btn"
+                :class="{ 'is-active': form.specs.quantityMode === 'total' }"
+                @click="form.specs.quantityMode = 'total'"
+              >{{ form.specs.quantityMode === 'total' ? '● ' : '' }}合計個数</button>
+            </div>
+            <input
+              type="number"
+              class="form-input"
+              v-model.number="form.specs[field.id]"
+              :min="field.min ?? 1"
+              :step="field.step ?? 1"
+            >
+            <p v-if="form.specs.quantityMode === 'per_game'" class="field-note qty-calc-note">
+              {{ form.specs[field.id] || 0 }} × {{ gameCount }}セット
+              = <strong>{{ effectiveFormQty }} {{ currentProduct.unit }}</strong>
+            </p>
+          </template>
+
+          <!-- 数値入力（通常） -->
+          <template v-else-if="field.type === 'number'">
+            <label class="form-label">{{ field.label }}</label>
+            <input
+              type="number"
+              class="form-input"
+              v-model.number="form.specs[field.id]"
+              :min="field.min ?? 0"
+              :max="field.max"
+              :step="field.step ?? 1"
+            >
+            <p v-if="field.description" class="field-note">{{ field.description }}</p>
+          </template>
+
+          <!-- チェックボックス -->
+          <template v-else-if="field.type === 'checkbox'">
+            <div class="check-row">
+              <input
+                type="checkbox"
+                :id="'chk-' + field.id"
+                v-model="form.specs[field.id]"
+              >
+              <label :for="'chk-' + field.id">{{ field.label }}</label>
+            </div>
+            <p v-if="field.description" class="field-note">{{ field.description }}</p>
+          </template>
+
+          <!-- 加工選択（ラジオボタン風） -->
+          <template v-else-if="field.type === 'finish'">
+            <label class="form-label">{{ field.label }}</label>
+            <div class="finish-row">
+              <button
+                v-for="f in finishes"
+                :key="f.id"
+                type="button"
+                class="finish-btn"
+                :class="{ 'is-active': form.specs[field.id] === f.id }"
+                @click="form.specs[field.id] = f.id"
+              >{{ f.name }}</button>
+            </div>
+          </template>
+
+        </div>
+      </template>
+
+      <!-- 価格プレビュー -->
+      <div v-if="currentPrice" class="price-preview">
+        <div class="price-preview-formula">{{ priceFormula }}</div>
+        <div class="price-preview-total">
+          ¥{{ fmt(currentPrice.total) }}<small>（税抜）</small>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn-primary btn-block"
+        :disabled="!currentPrice || currentPrice.total <= 0"
+        @click="addItem"
+      >見積もりに追加</button>
+    </section>
+
+    <!-- ===== 右カラム: 見積もり一覧 ===== -->
+    <section class="card">
+      <h2 class="card-title">見積もり一覧</h2>
+
+      <!-- 空状態 -->
+      <div v-if="items.length === 0" class="estimate-empty">
+        商品を選んで「見積もりに追加」してください
+      </div>
+
+      <!-- アイテムリスト -->
+      <ul v-else class="estimate-list">
+        <li v-for="item in processedItems" :key="item.id" class="estimate-item">
+          <div>
+            <div class="item-name">{{ item.productName }}</div>
+            <div class="item-specs">
+              <span v-for="(line, i) in item.specLines" :key="i">{{ line }}<br></span>
+            </div>
+            <div class="item-formula">{{ item.formula }}</div>
+          </div>
+          <div class="item-price-wrap">
+            <div class="item-price">¥{{ fmt(item.price.total) }}</div>
+            <button
+              type="button"
+              class="btn btn-sm btn-danger"
+              @click="removeItem(item.id)"
+            >削除</button>
+          </div>
+        </li>
+      </ul>
+
+      <!-- 合計と共有 -->
+      <div v-if="items.length > 0" class="estimate-footer">
+        <div class="total-row">
+          <span class="total-label">合計（税抜）</span>
+          <span class="total-amount">¥{{ fmt(grandTotal) }}</span>
+        </div>
+        <div class="total-tax">消費税込（10%）: ¥{{ fmt(Math.ceil(grandTotal * 1.1)) }}</div>
+        <div class="total-row total-per-game">
+          <span class="total-label">1ゲームあたり（税抜）</span>
+          <span class="total-per-game-amount">¥{{ fmt(grandTotal / Math.max(1, gameCount)) }}</span>
+        </div>
+
+        <div class="share-row">
+          <button type="button" class="btn btn-secondary btn-sm" @click="copyUrl">
+            {{ copied ? '✓ コピー済み' : 'URLをコピーして共有' }}
+          </button>
+        </div>
+      </div>
+
+      <p class="notice">
+        ※ 表示価格は参考値です。実際の価格は
+        <a href="https://www.mnd.co.jp/pricelists/" target="_blank" rel="noopener">萬印堂の価格表</a>
+        にてご確認ください。送料・消費税は別途必要です。
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<script type="module">
+  import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+  import { App } from './js/app.js';
+  createApp(App).mount('#app');
+</script>
+</body>
+</html>
