@@ -8,7 +8,7 @@
 ## ファイル構成
 
 ```
-src/
+docs/
 ├── CLAUDE.md         ← このファイル
 ├── SPEC.md           ← 要件定義
 ├── index.html        ← メインページ（Vueテンプレート含む）
